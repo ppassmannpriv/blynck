@@ -29,19 +29,16 @@ export default {
   methods: {
     setColor({ r, g, b }) {
       this.fixtureColor = `rgb(${r}, ${g}, ${b})`;
-      this.socket.emit("set", 255);
+      this.fixtureChannels.r.forEach((channel) => {
+        this.socket.emit("set", { channel, val: r });
+      });
+      this.fixtureChannels.g.forEach((channel) => {
+        this.socket.emit("set", { channel, val: g });
+      });
+      this.fixtureChannels.b.forEach((channel) => {
+        this.socket.emit("set", { channel, val: b });
+      });
       this.socket.emit("transmit");
-      // this.fixtureChannels.r.forEach(channel => {
-      //   this.artnet.set(channel, r, (err, res) => {
-      //     console.log(err, res);
-      //   })
-      // })
-      // this.fixtureChannels.g.forEach(channel => {
-      //   this.artnet.set(channel, g)
-      // })
-      // this.fixtureChannels.b.forEach(channel => {
-      //   this.artnet.set(channel, b)
-      // })
     },
   },
 };

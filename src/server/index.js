@@ -35,9 +35,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("disconnected");
   });
-  socket.on("set", (val) => {
-    console.log("set");
-    sender.prepChannel(1, val);
+  socket.on("set", ({ channel, val }) => {
+    console.log("set", { channel, val });
+    sender.prepChannel(channel, val);
   });
   socket.on("transmit", () => {
     console.log("transmit");
@@ -47,4 +47,14 @@ io.on("connection", (socket) => {
 
 server.listen(6969, () => {
   console.log("listening on *:6969");
+});
+
+const receiver = Dmxnet.newReceiver({
+  subnet: 0, //Destination subnet, default 0
+  universe: 0, //Destination universe, default 0
+  net: 0, //Destination net, default 0
+});
+
+receiver.on("data", function (data) {
+  console.log("DMX data:", data);
 });

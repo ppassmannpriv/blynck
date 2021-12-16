@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <fixture />
+    <Fixture :numberOfColors="3" :cmLengthOfFixture="100" :ledsPerMeter="60" />
   </div>
 </template>
 <script>

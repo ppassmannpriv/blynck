@@ -19,12 +19,12 @@
         @start="flash"
         @stop="flash(true)"
       />
+      <button @click="runColors">Run colors</button>
     </div>
   </div>
 </template>
 <script>
 import { mapActions } from "vuex";
-import io from "socket.io-client";
 import RGB from "../../components/Control/RGB.vue";
 import Speed from "../../components/Control/Speed.vue";
 
@@ -35,6 +35,21 @@ export default {
     Speed,
   },
   props: {
+    universe: {
+      type: Number,
+      required: true,
+      default: () => 0,
+    },
+    startChannel: {
+      type: Number,
+      required: true,
+      default: () => 0,
+    },
+    socket: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
     numberOfColors: {
       type: Number,
       required: true,
@@ -68,14 +83,21 @@ export default {
     fixtureColor() {
       return `rgb(${this.rColor}, ${this.gColor}, ${this.bColor})`;
     },
+    lastChannel() {
+      let channelCount = 0;
+      Object.values(this.fixtureChannels).forEach(
+        (channel) => (channelCount = channelCount + channel.length)
+      );
+      return channelCount + this.startChannel;
+    },
   },
   data() {
     return {
+      anim: false,
       rColor: 50,
       gColor: 50,
       bColor: 50,
       speed: 120,
-      socket: io("http://127.0.0.1:6969", { forceNew: true }),
       runningFlash: {
         interval: null,
         color: null,
@@ -89,22 +111,27 @@ export default {
       this.gColor = g;
       this.bColor = b;
       this.fixtureChannels.r.forEach((channel) => {
-        this.socket.emit("set", { channel, val: r });
+        this.socket.emit("set", { universe: this.universe, channel, val: r });
       });
       this.fixtureChannels.g.forEach((channel) => {
-        this.socket.emit("set", { channel, val: g });
+        this.socket.emit("set", { universe: this.universe, channel, val: g });
       });
       this.fixtureChannels.b.forEach((channel) => {
-        this.socket.emit("set", { channel, val: b });
+        this.socket.emit("set", { universe: this.universe, channel, val: b });
       });
       this.socket.emit("transmit");
     },
     generateRange(min, max, step) {
       let arr = [];
       for (let i = min; i <= max; i += step) {
-        arr.push(i);
+        arr.push(i + this.startChannel);
       }
       return arr;
+    },
+    delay(time) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, time);
+      });
     },
     changeFullColor({ r, g, b }) {
       this.setColor({ r, g, b });
@@ -143,6 +170,30 @@ export default {
           vm.setColor(rgb);
         }
       }, interval);
+    },
+    async runColors() {
+      this.anim = true;
+      const rgb = {
+        r: this.rColor,
+        g: this.gColor,
+        b: this.bColor,
+      };
+      let dir = { r: -1, g: 1, b: 1 };
+      for (let i = 0; i < 50; i++) {
+        if (rgb.r > 229) dir.r = -1;
+        if (rgb.g > 229) dir.g = -1;
+        if (rgb.b > 229) dir.b = -1;
+        if (rgb.r < 30) dir.r = 1;
+        if (rgb.g < 30) dir.g = 1;
+        if (rgb.b < 30) dir.b = 1;
+        rgb.r = rgb.r + 10 * dir.r;
+        rgb.b = rgb.b + 20 * dir.b;
+        rgb.g = rgb.g + 17 * dir.g;
+        const interval = Math.ceil(60000 / this.speed);
+        await this.delay(interval);
+        this.setColor(rgb);
+      }
+      this.anim = false;
     },
   },
   created() {

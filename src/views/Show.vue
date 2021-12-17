@@ -1,23 +1,23 @@
 <template>
   <div class="wrapper">
     <Fixture
-      :socket="socket"
+      :socket="getSocket"
       :numberOfColors="3"
-      :cmLengthOfFixture="100"
+      :cmLengthOfFixture="283"
       :ledsPerMeter="60"
       :startChannel="0"
       :universe="0"
     />
     <Fixture
-      :socket="socket"
+      :socket="getSocket"
       :numberOfColors="3"
       :cmLengthOfFixture="50"
       :ledsPerMeter="60"
       :startChannel="184"
-      :universe="0"
+      :universe="2"
     />
     <Fixture
-      :socket="socket"
+      :socket="getSocket"
       :numberOfColors="3"
       :cmLengthOfFixture="200"
       :ledsPerMeter="60"
@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-import io from "socket.io-client";
+import { mapGetters } from "vuex";
 import Fixture from "../components/Show/Fixture.vue";
 
 export default {
@@ -35,7 +35,6 @@ export default {
   components: { Fixture },
   data() {
     return {
-      socket: io("http://127.0.0.1:6969", { forceNew: true }),
       dmxChannelMap: {
         0: {},
         1: {},
@@ -55,6 +54,9 @@ export default {
         15: {},
       },
     };
+  },
+  computed: {
+    ...mapGetters("socket", ["getSocket"]),
   },
   methods: {
     open(link) {

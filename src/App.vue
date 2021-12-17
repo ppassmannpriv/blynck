@@ -6,6 +6,21 @@
   <router-view />
 </template>
 
+<script>
+import io from "socket.io-client";
+import { mapActions } from "vuex";
+
+export default {
+  name: "Blynck",
+  methods: {
+    ...mapActions("socket", ["setSocket"]),
+  },
+  created() {
+    this.setSocket(io("http://127.0.0.1:6969", { forceNew: true }));
+  },
+};
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

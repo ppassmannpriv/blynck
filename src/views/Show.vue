@@ -29,6 +29,7 @@
 <script>
 import { mapGetters } from "vuex";
 import Fixture from "../components/Show/Fixture.vue";
+import LedBar from "../model/Fixture/LedBar";
 
 export default {
   name: "Show",
@@ -62,6 +63,10 @@ export default {
     open(link) {
       this.$electron.shell.openExternal(link);
     },
+  },
+  created() {
+    const ledBar = new LedBar(100, 144, true);
+    console.log(ledBar);
   },
 };
 </script>

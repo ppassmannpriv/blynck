@@ -23,7 +23,7 @@ const Dmxnet = new Dmxlib.dmxnet({
 
 const senders = [
   Dmxnet.newSender({
-    ip: "192.168.1.203", //IP to send to, default 255.255.255.255
+    ip: "192.168.1.224", //IP to send to, default 255.255.255.255
     subnet: 0, //Destination subnet, default 0
     universe: 0, //Destination universe, default 0
     net: 0, //Destination net, default 0
@@ -31,7 +31,7 @@ const senders = [
     base_refresh_interval: 10000, // Default interval for sending unchanged ArtDmx
   }),
   Dmxnet.newSender({
-    ip: "192.168.1.203", //IP to send to, default 255.255.255.255
+    ip: "192.168.1.224", //IP to send to, default 255.255.255.255
     subnet: 0, //Destination subnet, default 0
     universe: 1, //Destination universe, default 0
     net: 0, //Destination net, default 0

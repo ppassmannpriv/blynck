@@ -14,9 +14,7 @@ const createShowStoreModule = () => ({
       state.show = show;
     },
     addFixture(state, fixture) {
-      console.log(fixture);
       const fixtureModel = FixtureFactory.create(fixture);
-      console.log(fixtureModel);
       state.show.fixtures.push(fixtureModel);
     },
   },

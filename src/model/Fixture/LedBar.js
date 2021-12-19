@@ -1,15 +1,9 @@
 import Fixture from "../Fixture.js";
 
 export default class LedBar extends Fixture {
-  constructor(
-    lengthInCm,
-    ledCount,
-    isRgb = false,
-    universe = null,
-    startChannel = null
-  ) {
+  constructor({ lengthInCm, ledCount, isRgb, universe, startChannel }) {
     const channels = Math.ceil((lengthInCm / 100) * ledCount * (isRgb ? 3 : 1));
-    super(universe, startChannel, channels);
+    super({ universe, startChannel, channels });
     this.lengthInCm = lengthInCm;
     this.ledCount = ledCount;
     this.isRgb = isRgb;

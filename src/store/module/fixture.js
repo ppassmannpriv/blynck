@@ -1,9 +1,10 @@
-/* eslint-disable no-param-reassign */
+import Fixture from "../../model/Fixture";
 
 const createFixtureStoreModule = () => ({
   namespaced: true,
   state: {
     fixture: Object,
+    availableFixtureTypes: Fixture.listAvailableFixtureTypes(),
   },
   mutations: {
     setFixture(state, fixture) {
@@ -20,6 +21,7 @@ const createFixtureStoreModule = () => ({
   },
   getters: {
     getFixture: (state) => state.fixture,
+    getAvailableFixtureTypes: (state) => state.availableFixtureTypes,
   },
 });
 

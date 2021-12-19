@@ -13,13 +13,23 @@
           type="number"
           name="startChannel"
         />
+        <label for="type">Type: </label>
+        <select v-model="fixture.type" name="type">
+          <option
+            v-for="(fixtureType, index) in getAvailableFixtureTypes"
+            :key="index"
+            :value="fixtureType"
+          >
+            {{ fixtureType }}
+          </option>
+        </select>
         <input type="submit" value="Save" />
       </form>
     </div>
   </div>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "AddFixture",
@@ -32,6 +42,9 @@ export default {
         type: null,
       },
     };
+  },
+  computed: {
+    ...mapGetters("fixture", ["getAvailableFixtureTypes"]),
   },
   methods: {
     ...mapActions("show", ["addFixture"]),

@@ -1,7 +1,7 @@
 import dmx from "../constants/dmx.js";
 
 export default class Fixture {
-  constructor(universe = null, startChannel = null, channels = null) {
+  constructor({ universe, startChannel, channels }) {
     this.id = null;
     this.universe = universe;
     this.startChannel = startChannel;
@@ -34,5 +34,9 @@ export default class Fixture {
       throw new Error(
         `Fixture has too many channels to fit into one universe. Starts at: ${this.startChannel} Total Channels: ${this.channels}`
       );
+  }
+
+  static listAvailableFixtureTypes() {
+    return ["LedBar"];
   }
 }

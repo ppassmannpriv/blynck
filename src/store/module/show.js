@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
-
-import Fixture from "../../model/Fixture";
+import FixtureFactory from "../../model/FixtureFactory";
 
 const createShowStoreModule = () => ({
   namespaced: true,
@@ -16,11 +15,7 @@ const createShowStoreModule = () => ({
     },
     addFixture(state, fixture) {
       console.log(fixture);
-      const fixtureModel = new Fixture(
-        fixture.universe,
-        fixture.startChannel,
-        fixture.channels
-      );
+      const fixtureModel = FixtureFactory.create(fixture);
       console.log(fixtureModel);
       state.show.fixtures.push(fixtureModel);
     },

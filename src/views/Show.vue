@@ -46,10 +46,5 @@ export default {
     ...mapGetters("socket", ["getSocket"]),
     ...mapGetters("show", ["getFixtures"]),
   },
-  methods: {
-    open(link) {
-      this.$electron.shell.openExternal(link);
-    },
-  },
 };
 </script>

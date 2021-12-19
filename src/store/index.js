@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import createFixtureStoreModule from "./module/fixture.js";
 import createSocketStoreModule from "./module/socket.js";
 import createShowStoreModule from "./module/show.js";
+import createMessageStoreModule from "./module/message.js";
 
 export default createStore({
   state: {},
@@ -11,5 +12,6 @@ export default createStore({
     show: createShowStoreModule(),
     fixture: createFixtureStoreModule(),
     socket: createSocketStoreModule(),
+    message: createMessageStoreModule(),
   },
 });

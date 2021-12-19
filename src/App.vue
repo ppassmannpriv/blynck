@@ -3,20 +3,35 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/show">Show</router-link>
   </div>
+  <Message
+    v-for="(message, index) in getMessages"
+    :key="index"
+    :message="message"
+  />
   <router-view />
 </template>
 
 <script>
 import io from "socket.io-client";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import Message from "./components/Util/Message.vue";
 
 export default {
   name: "Blynck",
+  components: { Message },
+  computed: {
+    ...mapGetters("message", ["getMessages"]),
+  },
   methods: {
     ...mapActions("socket", ["setSocket"]),
+    ...mapActions("message", ["addMessage"]),
   },
   created() {
-    this.setSocket(io("http://127.0.0.1:6969", { forceNew: true }));
+    try {
+      this.setSocket(io("http://127.0.0.1:6969", { forceNew: true }));
+    } catch (err) {
+      this.addMessage(err);
+    }
   },
 };
 </script>

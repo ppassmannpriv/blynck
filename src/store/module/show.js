@@ -31,6 +31,7 @@ const createShowStoreModule = () => ({
   },
   getters: {
     getShow: (state) => state.show,
+    getFixtures: (state) => state.show.fixtures,
   },
 });
 

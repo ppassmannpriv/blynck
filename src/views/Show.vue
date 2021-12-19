@@ -1,35 +1,21 @@
 <template>
   <div class="wrapper">
+    <router-link to="/show/addFixture">Add a fixture</router-link>
     <Fixture
+      v-for="(fixture, index) in getFixtures"
+      :key="index"
       :socket="getSocket"
-      :numberOfColors="3"
-      :cmLengthOfFixture="283"
-      :ledsPerMeter="60"
-      :startChannel="0"
-      :universe="0"
-    />
-    <Fixture
-      :socket="getSocket"
-      :numberOfColors="3"
-      :cmLengthOfFixture="50"
-      :ledsPerMeter="60"
-      :startChannel="184"
-      :universe="2"
-    />
-    <Fixture
-      :socket="getSocket"
-      :numberOfColors="3"
-      :cmLengthOfFixture="200"
-      :ledsPerMeter="60"
-      :startChannel="0"
-      :universe="1"
+      :numberOfColors="fixture.numberOfColors"
+      :cmLengthOfFixture="fixture.lengthInCm"
+      :ledsPerMeter="fixture.ledCount"
+      :startChannel="fixture.startChannel"
+      :universe="fixture.universe"
     />
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import Fixture from "../components/Show/Fixture.vue";
-import LedBar from "../model/Fixture/LedBar";
 
 export default {
   name: "Show",
@@ -58,15 +44,12 @@ export default {
   },
   computed: {
     ...mapGetters("socket", ["getSocket"]),
+    ...mapGetters("show", ["getFixtures"]),
   },
   methods: {
     open(link) {
       this.$electron.shell.openExternal(link);
     },
-  },
-  created() {
-    const ledBar = new LedBar(100, 144, true);
-    console.log(ledBar);
   },
 };
 </script>

@@ -67,6 +67,8 @@ export default {
     },
     saveFixture() {
       this.addFixture(this.fixture);
+      // @TODO: well, error handling. dont navigate away on failure.
+      this.$router.push("/show");
     },
   },
 };

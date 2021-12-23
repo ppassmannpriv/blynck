@@ -65,3 +65,15 @@ io.on("connection", (socket) => {
 server.listen(6969, () => {
   console.log("listening on *:6969");
 });
+
+/**
+ * Well... this needs to be solidified aswell. Make models and validate those. Factories for models.
+ * Events should be handled correctly with solid error handling.
+ *
+ * Incoming websocket should be able to transmit, configure, create and destroy UDP sockets for DMX/ArtNet.
+ * There should be validation on those aswell and error handling. Feedback needs to go upstream through
+ * the websocket.
+ *
+ * Validation on fixtures, universes, channels etc. should also take place here. Nothing out of bounds
+ * should be transmitted out, so resource usage on the network is as minimal as possible.
+ */

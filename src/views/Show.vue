@@ -1,25 +1,43 @@
 <template>
   <div class="wrapper">
     <router-link to="/show/addFixture">Add a fixture</router-link>
-    <Fixture
-      v-for="(fixture, index) in getFixtures"
-      :key="index"
-      :socket="getSocket"
-      :numberOfColors="fixture.numberOfColors"
-      :cmLengthOfFixture="fixture.lengthInCm"
-      :ledsPerMeter="fixture.ledCount"
-      :startChannel="fixture.startChannel"
-      :universe="fixture.universe"
-    />
+    <template v-for="(fixture, index) in getFixtures" :key="index">
+      <LedBar
+        v-if="fixture.type === 'LedBar'"
+        :socket="getSocket"
+        :numberOfColors="fixture.numberOfColors"
+        :cmLengthOfFixture="fixture.lengthInCm"
+        :ledsPerMeter="fixture.ledCount"
+        :startChannel="fixture.startChannel"
+        :universe="fixture.universe"
+      />
+      <LaserWorldCS1000RGBMk2
+        v-if="fixture.type === 'LaserWorldCS1000RGBMk2'"
+        :socket="getSocket"
+        :startChannel="fixture.startChannel"
+        :universe="fixture.universe"
+      />
+      <Fixture
+        v-else
+        :socket="getSocket"
+        :numberOfColors="fixture.numberOfColors"
+        :cmLengthOfFixture="fixture.lengthInCm"
+        :ledsPerMeter="fixture.ledCount"
+        :startChannel="fixture.startChannel"
+        :universe="fixture.universe"
+      />
+    </template>
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
+import LedBar from "../components/Show/LedBar.vue";
+import LaserWorldCS1000RGBMk2 from "../components/Show/LaserWorldCS1000RGBMk2.vue";
 import Fixture from "../components/Show/Fixture.vue";
 
 export default {
   name: "Show",
-  components: { Fixture },
+  components: { LedBar, LaserWorldCS1000RGBMk2, Fixture },
   data() {
     return {
       dmxChannelMap: {

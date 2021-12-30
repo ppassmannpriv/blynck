@@ -35,6 +35,10 @@
           v-if="fixture.type === 'LedBar'"
           @updateFixtureDetails="updateFixtureDetails"
         />
+        <LaserWorldCS1000RGBMk2
+          v-if="fixture.type === 'LaserWorldCS1000RGBMk2'"
+          @updateFixtureDetails="updateFixtureDetails"
+        />
         <input type="submit" value="Save" />
       </form>
     </div>
@@ -43,10 +47,11 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import LedBar from "../../components/Show/AddFixture/LedBar.vue";
+import LaserWorldCS1000RGBMk2 from "../../components/Show/AddFixture/LaserWorldCS1000RGBMk2.vue";
 
 export default {
   name: "AddFixture",
-  components: { LedBar },
+  components: { LedBar, LaserWorldCS1000RGBMk2 },
   data() {
     return {
       fixture: {

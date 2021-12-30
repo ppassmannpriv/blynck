@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import Sender from "./model/Dmxnet/Sender.js";
 import websocketConfig from "../constants/websocket.js";
 import dmxConfig from "../constants/dmx.js";
+import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
 
 export default class DmxServer {
   constructor() {
@@ -40,6 +41,7 @@ export default class DmxServer {
       base_refresh_interval: 10000,
     });
     this.senders = [this.createSender(sender1), this.createSender(sender2)];
+    this.devices = [];
 
     this.io.on("connection", (socket) => {
       console.log("connection found");
@@ -61,6 +63,13 @@ export default class DmxServer {
           console.error(err);
         }
       });
+      socket.on("triggerDevices", (anim) => {
+        try {
+          this.devices.forEach((device) => device.setChannels(anim));
+        } catch (err) {
+          console.error(err);
+        }
+      });
     });
   }
 
@@ -70,5 +79,12 @@ export default class DmxServer {
 
   start() {
     this.backend.start();
+  }
+
+  async connectToDevices() {
+    const device = new DMXDevice(await DMXDevice.getFirstAvailableDevice());
+    this.devices.push(device);
+
+    return this.devices;
   }
 }

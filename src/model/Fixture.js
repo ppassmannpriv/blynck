@@ -6,6 +6,7 @@ export default class Fixture {
     this.universe = universe;
     this.startChannel = startChannel;
     this.channels = channels;
+    this.type = null;
     this.validate();
   }
 
@@ -37,6 +38,6 @@ export default class Fixture {
   }
 
   static listAvailableFixtureTypes() {
-    return ["LedBar"];
+    return ["LedBar", "LaserWorldCS1000RGBMk2"];
   }
 }

@@ -1,6 +1,7 @@
 import Dmxlib from "dmxnet";
 import BackendHttp from "./BackendHttp.js";
 import { Server } from "socket.io";
+import Sender from "./model/Dmxnet/Sender.js";
 import websocketConfig from "../constants/websocket.js";
 import dmxConfig from "../constants/dmx.js";
 
@@ -22,6 +23,15 @@ export default class DmxServer {
       lName: dmxConfig.desc,
       hosts: dmxConfig.hosts,
     });
+    // const sender1 = new Sender({
+    //   ip: "192.168.1.224",
+    //   subnet: 0,
+    //   universe: 0,
+    //   net: 0,
+    //   port: 6454,
+    //   base_refresh_interval: 10000,
+    // });
+    // console.debug(sender1);
     this.senders = [
       this.Dmxnet.newSender({
         ip: "192.168.1.224",

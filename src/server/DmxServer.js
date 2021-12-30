@@ -23,33 +23,23 @@ export default class DmxServer {
       lName: dmxConfig.desc,
       hosts: dmxConfig.hosts,
     });
-    // const sender1 = new Sender({
-    //   ip: "192.168.1.224",
-    //   subnet: 0,
-    //   universe: 0,
-    //   net: 0,
-    //   port: 6454,
-    //   base_refresh_interval: 10000,
-    // });
-    // console.debug(sender1);
-    this.senders = [
-      this.Dmxnet.newSender({
-        ip: "192.168.1.224",
-        subnet: 0,
-        universe: 0,
-        net: 0,
-        port: 6454,
-        base_refresh_interval: 10000,
-      }),
-      this.createSender({
-        ip: "192.168.1.224",
-        subnet: 0,
-        universe: 1,
-        net: 0,
-        port: 6454,
-        base_refresh_interval: 10000,
-      }),
-    ];
+    const sender1 = new Sender({
+      ip: "192.168.1.224",
+      subnet: 0,
+      universe: 0,
+      net: 0,
+      port: 6454,
+      base_refresh_interval: 10000,
+    });
+    const sender2 = new Sender({
+      ip: "192.168.1.224",
+      subnet: 0,
+      universe: 1,
+      net: 0,
+      port: 6454,
+      base_refresh_interval: 10000,
+    });
+    this.senders = [this.createSender(sender1), this.createSender(sender2)];
 
     this.io.on("connection", (socket) => {
       console.log("connection found");
@@ -74,30 +64,11 @@ export default class DmxServer {
     });
   }
 
-  createSender({ ip, subnet, universe, net, port, base_refresh_interval }) {
-    return this.Dmxnet.newSender({
-      ip,
-      subnet,
-      universe,
-      net,
-      port,
-      base_refresh_interval,
-    });
+  createSender(sender) {
+    return this.Dmxnet.newSender(sender.getConfig());
   }
 
   start() {
     this.backend.start();
   }
 }
-
-/**
- * @TODO: This config needs a model and shit. At least validation. Invalid shit, will mess us up.
- * {
-      ip: "192.168.1.224", //IP to send to, default 255.255.255.255
-      subnet: 0, //Destination subnet, default 0
-      universe: 1, //Destination universe, default 0
-      net: 0, //Destination net, default 0
-      port: 6454, //Destination UDP Port, default 6454
-      base_refresh_interval: 10000, // Default interval for sending unchanged ArtDmx
-    }
- */

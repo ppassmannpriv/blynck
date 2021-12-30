@@ -1,7 +1,7 @@
-import { Model } from "objectmodel";
+//import { Model } from "objectmodel";
 
-export default class BaseModel extends Model {
-  constructor(modelProps) {
-    super(modelProps);
+export default class BaseModel {
+  constructor(props) {
+    this.types = props;
   }
 }

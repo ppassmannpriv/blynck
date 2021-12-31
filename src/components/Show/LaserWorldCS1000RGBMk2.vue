@@ -1,10 +1,35 @@
 <template>
   <div class="fixture">
     <h3>Laserworld CS1000 RGB MK2</h3>
-    <div class="display"></div>
     <div class="controls">
-      <Slider
-        v-for="(channel, index) in channelMap"
+      <DmxSwitch
+        name="Mode"
+        :channel="1"
+        :startValue="channelMap[0].value"
+        :options="[
+          {
+            title: 'Off',
+            value: 0,
+          },
+          {
+            title: 'Sound',
+            value: 70,
+          },
+          {
+            title: 'Auto',
+            value: 180,
+          },
+          {
+            title: 'DMX',
+            value: 255,
+          },
+        ]"
+        @updateValue="updateChannel"
+      />
+      <DmxSlider
+        v-for="(channel, index) in channelMap.filter(
+          (cM) => cM.type === 'Slider'
+        )"
         :key="index"
         :channel="channel.channel"
         :name="channel.name"
@@ -23,11 +48,12 @@
 <script>
 import { mapActions } from "vuex";
 import Speed from "../../components/Control/Speed.vue";
-import Slider from "../../components/Control/Slider.vue";
+import DmxSlider from "../Control/DmxSlider.vue";
+import DmxSwitch from "../Control/DmxSwitch.vue";
 
 export default {
   name: "LaserWorldCS1000RGBMk2",
-  components: { Speed, Slider },
+  components: { Speed, DmxSlider, DmxSwitch },
   props: {
     universe: {
       type: Number,
@@ -54,56 +80,67 @@ export default {
           channel: 1,
           name: "Mode",
           value: 0,
+          type: "Switch",
         },
         {
           channel: 2,
           name: "Animation",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 3,
           name: "Circular Motion",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 4,
           name: "Y-Rotation",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 5,
           name: "X-Rotation",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 6,
           name: "Horizontal Movement",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 7,
           name: "Vertical Movement",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 8,
           name: "Zoom",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 9,
           name: "Buildup",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 10,
           name: "Dot/Strobe",
           value: 0,
+          type: "Slider",
         },
         {
           channel: 11,
           name: "Color",
           value: 0,
+          type: "Slider",
         },
       ],
       channels: {
@@ -118,12 +155,19 @@ export default {
         10: 0,
         11: 0,
       },
+      runningFlash: {
+        interval: null,
+        color: null,
+      },
     };
   },
   methods: {
     ...mapActions("fixture", ["setFixture"]),
     updateChannel({ channel, value }) {
       this.channels[channel] = value;
+      this.channelMap.find(
+        (mappedChannel) => mappedChannel.channel === channel
+      ).value = value;
       this.socket.emit("triggerDevices", this.channels);
     },
     generateRange(min, max, step) {
@@ -142,7 +186,28 @@ export default {
       this.speed = speed;
       this.flash();
     },
-    flash() {},
+    flash(stop = false) {
+      clearInterval(this.runningFlash.interval);
+      if (stop) {
+        return;
+      }
+      if (this.speed === 0) return;
+      const interval = Math.ceil(30000 / this.speed);
+      const vm = this;
+      let r = true;
+      let i = 0;
+      this.runningFlash.interval = setInterval(() => {
+        if (r) {
+          if (i > 240) r = false;
+          i = i + 10;
+        } else {
+          if (i < 20) r = true;
+          i = i - 10;
+        }
+        vm.updateChannel({ channel: 1, value: 255 });
+        vm.updateChannel({ channel: 11, value: i });
+      }, interval);
+    },
   },
   created() {
     this.setFixture({

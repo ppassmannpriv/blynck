@@ -9,7 +9,13 @@
       :value="value"
       @change="sendValue"
     />
-    <Slider @update="sendValue" :min="0" :max="255" v-model="value" />
+    <Slider
+      @update="sendValue"
+      :min="0"
+      :max="255"
+      v-model="value"
+      :lazy="false"
+    />
   </div>
 </template>
 <script>

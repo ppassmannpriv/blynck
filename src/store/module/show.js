@@ -19,9 +19,6 @@ const createShowStoreModule = () => ({
     },
   },
   actions: {
-    setState({ commit }, { show }) {
-      commit("setShow", show);
-    },
     setShow({ commit }, show) {
       commit("setShow", show);
     },

@@ -1,20 +1,19 @@
 const createMessageStoreModule = () => ({
   namespaced: true,
   state: {
-    messages: Array,
+    messages: [],
   },
   mutations: {
     setMessages(state, messages) {
       state.messages = messages;
     },
     addMessage(state, message) {
-      state.messages.push(message);
+      const messages = state.messages;
+      messages.push(message);
+      state.messages = messages;
     },
   },
   actions: {
-    setState({ commit }, { messages }) {
-      commit("setMessages", messages);
-    },
     setMessages({ commit }, messages) {
       commit("setMessages", messages);
     },

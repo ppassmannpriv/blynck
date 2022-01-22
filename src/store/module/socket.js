@@ -11,9 +11,6 @@ const createSocketStoreModule = () => ({
     },
   },
   actions: {
-    setState({ commit }, { socket }) {
-      commit("setSocket", socket);
-    },
     setSocket({ commit }, socket) {
       commit("setSocket", socket);
     },

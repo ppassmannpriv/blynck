@@ -12,9 +12,6 @@ const createFixtureStoreModule = () => ({
     },
   },
   actions: {
-    setState({ commit }, { fixture }) {
-      commit("setFixture", fixture);
-    },
     setFixture({ commit }, fixture) {
       commit("setFixture", fixture);
     },

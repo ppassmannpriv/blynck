@@ -7,7 +7,7 @@ export default class LedBar extends Fixture {
     this.lengthInCm = lengthInCm;
     this.ledCount = ledCount;
     this.isRgb = isRgb;
-    this.type = "LedBar";
+    this.type = "LedBarCanvas";
   }
 
   setLengthInCm(lengthInCm) {

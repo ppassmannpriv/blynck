@@ -4,7 +4,7 @@
     <canvas
       ref="canvas"
       class="animation background"
-      :data-node-count="numberOfLeds"
+      data-node-count="144"
     ></canvas>
     <pre ref="debug" class="debug nodes"></pre>
     <div class="display" v-bind:style="{ background: fixtureColor }"></div>
@@ -35,7 +35,7 @@ import RGB from "../../components/Control/RGB.vue";
 import Speed from "../../components/Control/Speed.vue";
 
 export default {
-  name: "Fixture",
+  name: "LedBarCanvas",
   components: {
     RGB,
     Speed,
@@ -108,7 +108,6 @@ export default {
         interval: null,
         color: null,
       },
-      fixtureCanvasNodes: [],
     };
   },
   methods: {
@@ -214,15 +213,8 @@ export default {
       color = "rgba(0, 0, 0, 0)",
       position = { x: 0, y: 0, width: 0, height: 0 }
     ) {
-      const rgbSearch = /\((?<r>\d+?)\D*,\D*(?<g>\d+?)\D*,\D*(?<b>\d*).*\)/;
-      const res = color.match(rgbSearch).groups;
       return {
-        color: {
-          string: color,
-          r: res.r,
-          g: res.g,
-          b: res.b,
-        },
+        color,
         position,
       };
     },
@@ -240,8 +232,8 @@ export default {
       context.fillRect(position.x, position.y, position.width, position.height);
     },
     init() {
-      const canvas = this.$refs["canvas"];
-      const canvasWidth = document.body.clientWidth - 60;
+      const canvas = this.$refs.canvas;
+      const canvasWidth = document.body.clientWidth;
       const canvasHeight = 30;
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
@@ -249,17 +241,14 @@ export default {
       const nodeWidth = canvasWidth / nodeCount;
       const nodeHeight = canvasHeight;
       const context = canvas.getContext("2d");
-      this.fixtureCanvasNodes = this.buildNodes(nodeCount);
+      const nodes = this.buildNodes(nodeCount);
 
-      this.fixtureCanvasNodes[0] = this.buildSingleNode(
-        "rgba(130, 0, 255, 1)",
-        {
-          x: 0,
-          y: 0,
-          width: nodeWidth,
-          height: nodeHeight,
-        }
-      );
+      nodes[0] = this.buildSingleNode("rgba(130, 0, 255, 1)", {
+        x: 0,
+        y: 0,
+        width: nodeWidth,
+        height: nodeHeight,
+      });
       this.createLinearGradient(
         context,
         [
@@ -296,25 +285,22 @@ export default {
           width: nodeWidth,
           height: nodeHeight,
         };
-        this.fixtureCanvasNodes[i + 1] = this.buildSingleNode(color, position);
+        nodes[i + 1] = this.buildSingleNode(color, position);
       }
 
-      this.fixtureCanvasNodes[nodeCount - 1] = this.buildSingleNode(
-        "rgba(130, 255, 0, 1)",
-        {
-          x: (nodeCount - 1) * nodeWidth,
-          y: 0,
-          width: nodeWidth,
-          height: nodeHeight,
-        }
-      );
+      nodes[nodeCount - 1] = this.buildSingleNode("rgba(130, 255, 0, 1)", {
+        x: (nodeCount - 1) * nodeWidth,
+        y: 0,
+        width: nodeWidth,
+        height: nodeHeight,
+      });
 
       // DEBUG STUFF JUST FOR CHECKING
-      const debugNodes = this.$refs["debug"];
+      const debugNodes = this.$refs.debug;
       const canvasDetails = document.createElement("span");
       canvasDetails.innerText = `width: ${canvasWidth} - height: ${canvasHeight}`;
       debugNodes.appendChild(canvasDetails);
-      this.fixtureCanvasNodes.forEach((node, index) => {
+      nodes.forEach((node, index) => {
         const debugNode = document.createElement("span");
         debugNode.innerText = `${(index + 1).toString().padStart(3, 0)}: ${
           node.color
@@ -329,9 +315,6 @@ export default {
       colors: this.fixtureColor,
     });
   },
-  mounted() {
-    this.init();
-  },
 };
 </script>
 <style scoped lang="scss">
@@ -343,19 +326,6 @@ export default {
     width: calc(90% - 2px);
     margin: auto;
     border: 1px solid black;
-  }
-
-  .animation {
-    border: 1px solid black;
-  }
-
-  .debug {
-    display: block;
-    max-width: 100%;
-    span {
-      display: block;
-      width: 100%;
-    }
   }
 }
 </style>

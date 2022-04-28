@@ -2,6 +2,7 @@ import Dmxlib from "dmxnet";
 import BackendHttp from "./BackendHttp.js";
 import { Server } from "socket.io";
 import Sender from "./model/Dmxnet/Sender.js";
+import Receiver from "./model/Dmxnet/Receiver.js";
 import websocketConfig from "../constants/websocket.js";
 import dmxConfig from "../constants/dmx.js";
 import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
@@ -26,21 +27,28 @@ export default class DmxServer {
     });
     const sender1 = new Sender({
       ip: "192.168.1.224",
-      subnet: 0,
+      subnet: 3,
       universe: 0,
       net: 0,
       port: 6454,
       base_refresh_interval: 10000,
     });
     const sender2 = new Sender({
-      ip: "192.168.1.224",
-      subnet: 0,
-      universe: 1,
+      ip: "192.168.1.188",
+      subnet: 2,
+      universe: 3,
       net: 0,
       port: 6454,
       base_refresh_interval: 10000,
     });
+    const receiver1 = new Receiver({
+      subnet: 2,
+      universe: 3,
+      net: 0,
+      subUniverse: 0,
+    });
     this.senders = [this.createSender(sender1), this.createSender(sender2)];
+    this.receivers = [this.createReceiver(receiver1)];
     this.devices = [];
 
     this.io.on("connection", (socket) => {
@@ -70,7 +78,17 @@ export default class DmxServer {
           console.error(err);
         }
       });
+
+      this.receivers.forEach((receiver) => {
+        receiver.on("data", (data) => {
+          socket.emit("receivedDmx", data);
+        });
+      });
     });
+  }
+
+  createReceiver(receiver) {
+    return this.Dmxnet.newReceiver(receiver.getConfig());
   }
 
   createSender(sender) {
@@ -82,8 +100,12 @@ export default class DmxServer {
   }
 
   async connectToDevices() {
-    const device = new DMXDevice(await DMXDevice.getFirstAvailableDevice());
-    this.devices.push(device);
+    try {
+      const device = new DMXDevice(await DMXDevice.getFirstAvailableDevice());
+      this.devices.push(device);
+    } catch (err) {
+      console.error(err);
+    }
 
     return this.devices;
   }

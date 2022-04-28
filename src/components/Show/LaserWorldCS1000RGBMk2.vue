@@ -43,6 +43,7 @@
         @stop="flash(true)"
       />
     </div>
+    <DmxDisplay name="Laser Display" :channels="channels" />
   </div>
 </template>
 <script>
@@ -50,10 +51,11 @@ import { mapActions } from "vuex";
 import Speed from "../../components/Control/Speed.vue";
 import DmxSlider from "../Control/DmxSlider.vue";
 import DmxSwitch from "../Control/DmxSwitch.vue";
+import DmxDisplay from "../Control/DMXDisplay.vue";
 
 export default {
   name: "LaserWorldCS1000RGBMk2",
-  components: { Speed, DmxSlider, DmxSwitch },
+  components: { Speed, DmxSlider, DmxSwitch, DmxDisplay },
   props: {
     universe: {
       type: Number,
@@ -177,6 +179,11 @@ export default {
       }
       return arr;
     },
+    externalDmx(channels) {
+      console.log(channels);
+      this.values = channels;
+      this.socket.emit("triggerDevices", this.channels);
+    },
     delay(time) {
       return new Promise((resolve) => {
         setTimeout(resolve, time);
@@ -212,6 +219,12 @@ export default {
   created() {
     this.setFixture({
       id: 1337,
+    });
+    this.socket.on("receivedDmx", (data) => {
+      for (let i = 0; i <= 11; i++) {
+        this.channels[i + 1] = data[i];
+      }
+      this.socket.emit("triggerDevices", this.channels);
     });
   },
 };

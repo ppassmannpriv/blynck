@@ -3,9 +3,11 @@ const dmx = {
   maxUniverses: 16,
   maxSubnets: 16,
   name: "blynck DMX",
-  desc: "Our small DMX Artnet Application.",
+  desc: "blyncking lights",
   hosts: ["127.0.0.1"],
-  logLevel: "debug",
+  logLevel: "error",
+  udpPort: 6454,
+  base_refresh_interval: 10000,
 };
 
 export default dmx;

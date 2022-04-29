@@ -224,7 +224,7 @@ export default {
       for (let i = 0; i <= 11; i++) {
         this.channels[i + 1] = data[i];
       }
-      this.socket.emit("triggerDevices", this.channels);
+      this.socket.volatile.emit("triggerDevices", this.channels);
     });
   },
 };

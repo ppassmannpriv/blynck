@@ -2,7 +2,7 @@ import Dmxlib from "dmxnet";
 import BackendHttp from "./BackendHttp.js";
 import { Server } from "socket.io";
 import Sender from "./model/Dmxnet/Sender.js";
-import Receiver from "./model/Dmxnet/Receiver.js";
+import ReceiverFactory from "./factory/ReceiverFactory.js";
 import websocketConfig from "../constants/websocket.js";
 import dmxConfig from "../constants/dmx.js";
 import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
@@ -41,14 +41,18 @@ export default class DmxServer {
       port: 6454,
       base_refresh_interval: 10000,
     });
-    const receiver1 = new Receiver({
-      subnet: 2,
-      universe: 3,
-      net: 0,
-      subUniverse: 0,
-    });
+    try {
+      const receiver1 = ReceiverFactory.create({
+        subnet: 2,
+        universe: 3,
+        net: 0,
+        subUniverse: 0,
+      });
+      this.receivers = [this.createReceiver(receiver1)];
+    } catch (error) {
+      console.error(error);
+    }
     this.senders = [this.createSender(sender1), this.createSender(sender2)];
-    this.receivers = [this.createReceiver(receiver1)];
     this.devices = [];
 
     this.io.on("connection", (socket) => {
@@ -73,7 +77,11 @@ export default class DmxServer {
       });
       socket.on("triggerDevices", (anim) => {
         try {
-          this.devices.forEach((device) => device.setChannels(anim));
+          this.devices.forEach((device) => {
+            if (device.shouldBeSending) {
+              device.setChannels(anim);
+            }
+          });
         } catch (err) {
           console.error(err);
         }

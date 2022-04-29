@@ -1,14 +1,16 @@
 import Dmxlib from "dmxnet";
 import BackendHttp from "./BackendHttp.js";
 import { Server } from "socket.io";
-import Sender from "./model/Dmxnet/Sender.js";
 import ReceiverFactory from "./factory/ReceiverFactory.js";
+import SenderFactory from "./factory/SenderFactory.js";
 import websocketConfig from "../constants/websocket.js";
 import dmxConfig from "../constants/dmx.js";
 import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
 
 export default class DmxServer {
   constructor() {
+    this.receivers = [];
+    this.senders = [];
     this.backend = new BackendHttp();
     this.io = new Server(this.backend.server, {
       cors: {
@@ -25,22 +27,6 @@ export default class DmxServer {
       lName: dmxConfig.desc,
       hosts: dmxConfig.hosts,
     });
-    const sender1 = new Sender({
-      ip: "192.168.1.224",
-      subnet: 3,
-      universe: 0,
-      net: 0,
-      port: 6454,
-      base_refresh_interval: 10000,
-    });
-    const sender2 = new Sender({
-      ip: "192.168.1.188",
-      subnet: 2,
-      universe: 3,
-      net: 0,
-      port: 6454,
-      base_refresh_interval: 10000,
-    });
     try {
       const receiver1 = ReceiverFactory.create({
         subnet: 2,
@@ -48,11 +34,24 @@ export default class DmxServer {
         net: 0,
         subUniverse: 1,
       });
-      this.receivers = [this.createReceiver(receiver1)];
+      const sender1 = SenderFactory.create({
+        ip: "192.168.1.224",
+        subnet: 3,
+        universe: 0,
+        net: 0,
+      });
+      const sender2 = SenderFactory.create({
+        ip: "192.168.1.188",
+        subnet: 2,
+        universe: 3,
+        net: 0,
+      });
+      this.receivers.push(this.createReceiver(receiver1));
+      this.senders.push(this.createSender(sender1));
+      this.senders.push(this.createSender(sender2));
     } catch (error) {
       console.error(error);
     }
-    this.senders = [this.createSender(sender1), this.createSender(sender2)];
     this.devices = [];
 
     this.io.on("connection", (socket) => {

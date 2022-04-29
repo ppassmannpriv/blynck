@@ -1,13 +1,9 @@
+import Factory from "./Factory.js";
 import Sender from "../model/Dmxnet/Sender.js";
 import SenderValidator from "../validator/SenderValidator.js";
 
-export default class SenderFactory {
+export default class SenderFactory extends Factory {
   static create(props) {
-    const instance = new Sender(props);
-    const validator = new SenderValidator();
-    if (validator.validate(instance)) {
-      return instance;
-    }
-    return null;
+    return super.create(props, Sender, SenderValidator);
   }
 }

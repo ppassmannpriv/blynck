@@ -46,7 +46,7 @@ export default class DmxServer {
         subnet: 2,
         universe: 3,
         net: 0,
-        subUniverse: 0,
+        subUniverse: 1,
       });
       this.receivers = [this.createReceiver(receiver1)];
     } catch (error) {

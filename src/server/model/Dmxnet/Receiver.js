@@ -20,7 +20,7 @@ export default class Receiver extends BaseModel {
       subnet: this.subnet,
       universe: this.universe,
       net: this.net,
-      subUniverse: this.subUniverse,
+      subuni: this.subUniverse,
     };
   }
 }

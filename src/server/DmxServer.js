@@ -28,27 +28,30 @@ export default class DmxServer {
       hosts: dmxConfig.hosts,
     });
     try {
-      const receiver1 = ReceiverFactory.create({
-        subnet: 2,
-        universe: 3,
-        net: 0,
-        subUniverse: 1,
-      });
-      const sender1 = SenderFactory.create({
-        ip: "192.168.1.224",
-        subnet: 3,
-        universe: 0,
-        net: 0,
-      });
-      const sender2 = SenderFactory.create({
-        ip: "192.168.1.188",
-        subnet: 2,
-        universe: 3,
-        net: 0,
-      });
-      this.receivers.push(this.createReceiver(receiver1));
-      this.senders.push(this.createSender(sender1));
-      this.senders.push(this.createSender(sender2));
+      this.receivers.push(
+        this.addReceiver({
+          subnet: 2,
+          universe: 3,
+          net: 0,
+          subUniverse: 1,
+        })
+      );
+      this.senders.push(
+        this.addSender({
+          ip: "192.168.1.224",
+          subnet: 3,
+          universe: 0,
+          net: 0,
+        })
+      );
+      this.senders.push(
+        this.addSender({
+          ip: "192.168.1.188",
+          subnet: 2,
+          universe: 3,
+          net: 0,
+        })
+      );
     } catch (error) {
       console.error(error);
     }
@@ -85,6 +88,24 @@ export default class DmxServer {
           console.error(err);
         }
       });
+      socket.on("addSender", (senderProps) => {
+        try {
+          this.senders.push(this.addSender(senderProps));
+          console.log("Added Sender!");
+          console.debug(this.senders[this.senders.length - 1]);
+        } catch (error) {
+          console.error(error);
+        }
+      });
+      socket.on("addReceiver", (receivedProps) => {
+        try {
+          this.receivers.push(this.addReceiver(receivedProps));
+          console.log("Added Receiver!");
+          console.debug(this.receivers[this.receivers.length - 1]);
+        } catch (error) {
+          console.error(error);
+        }
+      });
 
       this.receivers.forEach((receiver) => {
         receiver.on("data", (data) => {
@@ -94,12 +115,22 @@ export default class DmxServer {
     });
   }
 
-  createReceiver(receiver) {
-    return this.Dmxnet.newReceiver(receiver.getConfig());
+  addReceiver(props) {
+    const receiverModel = ReceiverFactory.create(props);
+    return this.createReceiver(receiverModel);
   }
 
-  createSender(sender) {
-    return this.Dmxnet.newSender(sender.getConfig());
+  createReceiver(receiverModel) {
+    return this.Dmxnet.newReceiver(receiverModel.getConfig());
+  }
+
+  addSender(props) {
+    const senderModel = SenderFactory.create(props);
+    return this.createSender(senderModel);
+  }
+
+  createSender(senderModel) {
+    return this.Dmxnet.newSender(senderModel.getConfig());
   }
 
   start() {

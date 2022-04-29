@@ -27,6 +27,7 @@
         :universe="fixture.universe"
       />
     </template>
+    <Network />
   </div>
 </template>
 <script>
@@ -34,10 +35,11 @@ import { mapGetters } from "vuex";
 import LedBar from "../components/Show/LedBar.vue";
 import LaserWorldCS1000RGBMk2 from "../components/Show/LaserWorldCS1000RGBMk2.vue";
 import Fixture from "../components/Show/Fixture.vue";
+import Network from "../components/Show/Network.vue";
 
 export default {
   name: "Show",
-  components: { LedBar, LaserWorldCS1000RGBMk2, Fixture },
+  components: { LedBar, LaserWorldCS1000RGBMk2, Fixture, Network },
   data() {
     return {
       dmxChannelMap: {

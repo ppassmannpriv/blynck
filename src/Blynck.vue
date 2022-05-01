@@ -1,7 +1,8 @@
 <template>
   <div id="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/show">Show</router-link>
+    <router-link to="/show">Show</router-link> |
+    <router-link to="/config">Config</router-link>
   </div>
   <Message
     v-for="(message, index) in getMessages"

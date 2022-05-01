@@ -3,6 +3,7 @@ import createFixtureStoreModule from "./module/fixture.js";
 import createSocketStoreModule from "./module/socket.js";
 import createShowStoreModule from "./module/show.js";
 import createMessageStoreModule from "./module/message.js";
+import createConfigStoreModule from "./module/config.js";
 
 export default createStore({
   state: {},
@@ -13,5 +14,6 @@ export default createStore({
     fixture: createFixtureStoreModule(),
     socket: createSocketStoreModule(),
     message: createMessageStoreModule(),
+    config: createConfigStoreModule(),
   },
 });

@@ -4,13 +4,16 @@
     <div>
       <p>Cool, network conf.</p>
       <div class="col senders">
-        <button @click.prevent="createSender">Create Sender</button>
+        <button @click.prevent="createSender" v-show="creatingSender === false">
+          Create Sender
+        </button>
         <Sender
           v-show="creatingSender"
           :isNew="creatingSender"
           @abort="abortCreateSender"
           @save="saveSender"
         />
+        <hr />
         <Sender
           v-for="(sender, index) in getSenders"
           :key="index"
@@ -48,11 +51,15 @@ export default {
     },
     saveSender(sender) {
       this.addSender(sender);
+      this.creatingSender = false;
     },
   },
 };
 </script>
 <style lang="css" scoped>
+.col {
+  width: 25%;
+}
 .control {
   width: 100%;
   display: flex;

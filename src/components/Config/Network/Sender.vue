@@ -1,6 +1,7 @@
 <template>
-  <div class="wrapper">
-    <h3>Sender</h3>
+  <div class="sender-wrapper">
+    <h3 v-if="!isNew">Sender {{ sender.id }}</h3>
+    <h3 v-else>New Sender</h3>
     <div class="config">
       <form @submit.prevent="saveSender">
         <div class="control input">
@@ -40,8 +41,9 @@
         </div>
         <div class="control buttons">
           <input type="submit" value="Save" />
-          <button @click.prevent="clear">Clear</button>
-          <button @click.prevent="abort">Abort</button>
+          <button @click.prevent="clear" v-if="isNew">Clear</button>
+          <button @click.prevent="remove" v-if="isNew === false">Delete</button>
+          <button @click.prevent="abort" v-if="isNew">Abort</button>
         </div>
       </form>
     </div>
@@ -52,6 +54,11 @@ import { uuid } from "vue-uuid";
 export default {
   name: "Sender",
   props: {
+    isNew: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
     storedSender: {
       type: Object,
       required: false,
@@ -83,18 +90,29 @@ export default {
   methods: {
     saveSender() {
       this.$emit("save", this.sender);
+      this.clear();
     },
     abort() {
-      this.$emit("abort");
+      if (this.isNew) {
+        this.$emit("abort");
+      }
+    },
+    remove() {
+      if (this.isNew === false) {
+        this.$emit("remove");
+      }
     },
     clear() {
-      this.sender = {
-        ip: null,
-        subnet: null,
-        universe: null,
-        net: null,
-        channel: null,
-      };
+      if (this.isNew) {
+        this.sender = {
+          id: null,
+          ip: null,
+          subnet: null,
+          universe: null,
+          net: null,
+          channel: null,
+        };
+      }
     },
   },
   created() {
@@ -105,12 +123,11 @@ export default {
       }
     }
   },
-  mounted() {},
 };
 </script>
 <style lang="scss" scoped>
-.wrapper {
-  width: 25%;
+.sender-wrapper {
+  width: 100%;
 }
 .control {
   width: 100%;

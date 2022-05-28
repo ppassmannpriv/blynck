@@ -1,10 +1,9 @@
-import Dmxlib from "dmxnet";
 import BackendHttp from "./BackendHttp.js";
+import Dmxnet from "./DmxServer/Dmxnet.js";
 import { Server } from "socket.io";
 import ReceiverFactory from "./factory/ReceiverFactory.js";
 import SenderFactory from "./factory/SenderFactory.js";
 import websocketConfig from "../constants/websocket.js";
-import dmxConfig from "../constants/dmx.js";
 import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
 
 export default class DmxServer {
@@ -18,15 +17,7 @@ export default class DmxServer {
         methods: ["GET", "POST"],
       },
     });
-    this.Dmxnet = new Dmxlib.dmxnet({
-      log: {
-        level: dmxConfig.logLevel,
-      },
-      oem: 0,
-      sName: dmxConfig.name,
-      lName: dmxConfig.desc,
-      hosts: dmxConfig.hosts,
-    });
+    this.Dmxnet = Dmxnet.create();
     try {
       this.receivers.push(
         this.addReceiver({
@@ -139,8 +130,13 @@ export default class DmxServer {
 
   async connectToDevices() {
     try {
-      const device = new DMXDevice(await DMXDevice.getFirstAvailableDevice());
-      this.devices.push(device);
+      const devices = await DMXDevice.listDevices();
+      if (devices.length > 0) {
+        const device = new DMXDevice(await DMXDevice.getFirstAvailableDevice());
+        this.devices.push(device);
+      } else {
+        console.log("No DMX USB Devices found!");
+      }
     } catch (err) {
       console.error(err);
     }

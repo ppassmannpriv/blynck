@@ -1,9 +1,8 @@
 import BackendHttp from "./BackendHttp.js";
 import Dmxnet from "./DmxServer/Dmxnet.js";
-import { Server } from "socket.io";
+import SocketServer from "./DmxServer/SocketServer.js";
 import ReceiverFactory from "./factory/ReceiverFactory.js";
 import SenderFactory from "./factory/SenderFactory.js";
-import websocketConfig from "../constants/websocket.js";
 import { EnttecOpenDMXUSBDevice as DMXDevice } from "enttec-open-dmx-usb";
 
 export default class DmxServer {
@@ -11,13 +10,9 @@ export default class DmxServer {
     this.receivers = [];
     this.senders = [];
     this.backend = new BackendHttp();
-    this.io = new Server(this.backend.server, {
-      cors: {
-        origin: `${websocketConfig.protocol}://${websocketConfig.host}:${websocketConfig.port}`,
-        methods: ["GET", "POST"],
-      },
-    });
+    this.io = SocketServer.create(this.backend.server);
     this.Dmxnet = Dmxnet.create();
+
     try {
       this.receivers.push(
         this.addReceiver({
